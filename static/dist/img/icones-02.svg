@@ -5,8 +5,9 @@
 <style type="text/css">
 	.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st1{fill:none;stroke:#000000;stroke-width:2.8224;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st2{fill:none;stroke:#000000;stroke-width:2.8992;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st3{fill:none;stroke:#000000;stroke-width:2.7436;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st2{fill:#823499;}
+	.st3{fill:none;stroke:#000000;stroke-width:2.8992;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st4{fill:none;stroke:#000000;stroke-width:2.7436;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
 <path class="st1" d="M38.8,64.4c-5.2-4.2-10.1-8.8-15.6-12.6C19.9,49.5,10.1,39,6.5,38.1c-2.6,1.7-2.3,4.1-2.3,6.5
 	c0,13.2,0.2,26.3-0.1,39.5c-0.2,6,3.1,7.7,7.9,7.7c24,0.1,48,0.1,72,0c4.8,0,8-1.7,7.9-7.7c-0.3-13.2-0.1-26.3-0.1-39.5

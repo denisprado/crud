@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+# encoding=utf8
 import os
 import tempfile
 from flask import Flask, flash, render_template, request, redirect, url_for
@@ -116,7 +118,7 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Usuario ja está conectado.'),
+        response = make_response(json.dumps('Usuario ja conectado.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -143,12 +145,13 @@ def gconnect():
     login_session['user_id'] = user_id
 
     output = ''
-    output += '<h1>Welcome, '
+    output += '<h2>Benvindo, '
     output += login_session['username']
-    output += '!</h1>'
+    output += '!</h2>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 50px">'
+    output += ' " style = "width: 150px;height:150px;'
+    output += 'border-radius: 50%;object-fit:cover;">'
     flash("you are now logged in as %s" % login_session['username'])
     print("done!")
     return output
@@ -626,7 +629,7 @@ def showFesta(id):
                                         editedFesta.valor]]
     taxonomies = [["select", "Tema", "tema", temas, editedFesta.tema]]
     radio = ["foto", fotos, editedFesta.foto]
-    artes = [["Artes", artes, editedFesta.artes]]
+    artes = [["artes", artes, editedFesta.artes]]
     return render_template('showFORM.html', id=id, fields=fields,
                            editing=editedFesta, fotos=radio,
                            taxonomies=taxonomies,
@@ -664,7 +667,7 @@ def newFesta():
                    "price"]]
         taxonomies = [["select", "Tema", "tema", temas]]
         radio = ["foto", fotos]
-        artes = [["Artes", artes]]
+        artes = [["artes", artes]]
         return render_template('newFORM.html', taxonomies=taxonomies,
                                fields=fields, fotos=radio, checkboxes=artes,
                                table="Festa")
@@ -691,7 +694,9 @@ def editFesta(id):
             editedFesta.foto = request.form['foto']
         if request.form['artes']:
             artes_selected = request.form.getlist('artes')
+            editedFesta.artes = []
             for id_arte in artes_selected:
+                print(id_arte)
                 arte = session.query(Arte).filter_by(id=id_arte).one()
                 editedFesta.artes.append(arte)
         session.add(editedFesta)
@@ -704,7 +709,7 @@ def editFesta(id):
                                             editedFesta.valor]]
         taxonomies = [["select", "Tema", "tema", temas, editedFesta.tema]]
         radio = ["foto", fotos, editedFesta.foto]
-        artes = [["Artes", artes, editedFesta.artes]]
+        artes = [["artes", artes, editedFesta.artes]]
         return render_template('editFORM.html', id=id, fields=fields,
                                editing=editedFesta, fotos=radio,
                                taxonomies=taxonomies,
@@ -731,11 +736,11 @@ def deleteFesta(id):
 @login_required
 def listFestaJSON():
     festas = session.query(Festa).options(joinedload(Festa.artes)).all()
-    artes = session.query(Arte).options(joinedload(Arte.prods)).all()
+    artes = session.query(Arte).options(joinedload(Arte.produtos)).all()
     return jsonify(dict(Festa=[dict(c.serialize,
                                     Artes=[dict(c.serialize,
                                                 Produtos=[i.serialize
-                                                          for i in c.prods])
+                                                          for i in c.produtos])
                                            for c in artes])
                                for c in festas]))
 
@@ -755,13 +760,25 @@ def showFestaJSON(id):
                                for c in festas]))
 
 
+@app.route('/arte/<int:id>/JSON')
+@login_required
+def showArteJSON(id):
+    artes = session.query(Arte).options(joinedload(Arte.produtos)).filter_by(
+        id=id)
+    return jsonify(Arte=[dict(d.serialize,
+                         Produtos=[i.serialize
+                                   for i in d.produtos])
+                         for d in artes])
+
+
 @app.route('/artes/JSON')
 @login_required
 def listArteJSON():
-    artes = session.query(Arte).options(joinedload(Arte.prods)).all()
-    return jsonify(dict(Artes=[dict(c.serialize, Produtos=[i.serialize
-                                                           for i in c.prods])
-                               for c in artes]))
+    artes = session.query(Arte).options(joinedload(Arte.produtos)).all()
+    return jsonify(dict(Arte=[dict(d.serialize,
+                        Produtos=[i.serialize
+                                  for i in d.produtos])
+                        for d in artes]))
 
 
 @app.route('/produtos/JSON')
@@ -771,6 +788,13 @@ def listProdutoJSON():
     return jsonify(produtos=[i.serialize for i in produtos])
 
 
+@app.route('/produto/<int:id>/JSON')
+@login_required
+def showProdutoJSON(id):
+    produto = session.query(Produto).filter_by(id=id)
+    return jsonify(produto=[i.serialize for i in produto])
+
+
 @app.route('/temas/JSON')
 @login_required
 def listTemaJSON():
@@ -778,11 +802,39 @@ def listTemaJSON():
     return jsonify(temas=[i.serialize for i in temas])
 
 
+@app.route('/tema/<int:id>/JSON')
+@login_required
+def showTemaJSON(id):
+    tema = session.query(Tema).filter_by(id=id)
+    return jsonify(tema=[i.serialize for i in tema])
+
+
 @app.route('/fotos/JSON')
 @login_required
 def listFotoJSON():
     fotos = session.query(Foto).all()
     return jsonify(fotos=[i.serialize for i in fotos])
+
+
+@app.route('/foto/<int:id>/JSON')
+@login_required
+def showFotoJSON(id):
+    foto = session.query(Foto).all()
+    return jsonify(foto=[i.serialize for i in foto])
+
+
+@app.route('/objetos/JSON')
+@login_required
+def listObjetoJSON():
+    objetos = session.query(Objeto).all()
+    return jsonify(objetos=[i.serialize for i in objetos])
+
+
+@app.route('/objeto/<int:id>/JSON')
+@login_required
+def showObjetoJSON(id):
+    objeto = session.query(Objeto).all()
+    return jsonify(objeto=[i.serialize for i in objeto])
 
 
 @app.route('/artes')
@@ -874,6 +926,7 @@ def editArte(id):
         if request.form['foto']:
             editedArte.foto = request.form['foto']
         if request.form['produtos']:
+            editedArte.produtos = []
             produtos_selected = request.form.getlist('produtos')
             for id_produto in produtos_selected:
                 produto = session.query(Produto).filter_by(id=id_produto).one()

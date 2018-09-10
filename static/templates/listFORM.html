@@ -2,7 +2,7 @@
 {% block body %}
     <section>
         <a class="btn btn--primary" href="{{url_for('new'+table)}}">Adicionar {{table}}</a>
-        
+        <a class="btn btn--white" href="{{url_for('list'+table+'JSON')}}">JSON Format</a>
         <div class="card-columns">
             {% for record in var_table %}
             <div class="card">
