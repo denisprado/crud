@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block body %}
+    <section>
+        <a class="btn btn--primary" href="{{url_for('new'+table)}}">Adicionar {{table}}</a>
+        
+        <div class="card-columns">
+            {% for record in var_table %}
+            <div class="card">
+                {% for foto in fotos %}
+                    <div class="fotos__item">
+                    {% if foto.id == record.foto %}
+                        <a href="{{url_for('show'+table, id=record.id)}}">
+                        <img src="{{ url_for('uploaded_file', filename=foto.caminho) }}" width="100%"></img>
+                        </a>
+                    {% elif table=="Foto" and foto.caminho == record.caminho %}
+                        <a href="{{url_for('show'+table, id=record.id)}}">
+                        <img src="{{ url_for('uploaded_file', filename=foto.caminho) }}" width="100%"></img>
+                        </a>
+                    {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="card-body">
+                    {% if record.nome %}
+                        <a href="{{url_for('show'+table, id=record.id)}}"><h2>{{ record.nome }}</h2></a>
+                        {% else %}
+                        <a href="{{url_for('show'+table, id=record.id)}}"><h2>{{ record.caminho }}</h2></a>
+                    {% endif %}
+                    <p>{{ record.descricao }}</p>
+                    <p>{{ record.valor }}</p>
+                {% for taxonomy in taxonomies %}
+                    {% if taxonomy[0]=="select" %}
+                            {% for tax in taxonomy[3] %}
+                                 {% if tax.id==record[taxonomy[2]] %}<p>{{taxonomy[1]}}: {{tax.nome}}</p>{% endif %}
+                            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                
+                
+                <a class="btn btn--primary" href="{{url_for('edit'+table, id=record.id)}}">Editar</a>
+                <a class="btn btn--primary" href="{{url_for('delete'+table, id=record.id)}}">Excluir</a>
+                
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

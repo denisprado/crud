@@ -1,0 +1,47 @@
+// COLORS
+$color-primary: #ab55c5;
+$color-primary-light:lighten($color-primary,15%);
+$color-primary-dark: darken($color-primary,15%);
+
+$color-secondary-light: #97d88a;
+$color-secondary-dark: #5bdd56;
+
+$color-tertiary-light: #2998ff;
+$color-tertiary-dark: #5643fa;
+
+$color-grey-light-1: #f9f8fa;
+$color-grey-light-2: darken($color-grey-light-1,10%);
+
+$color-grey-dark: #777;
+$color-grey-dark-2: #999;
+$color-grey-dark-3: #333;
+
+$color-white: #fff;
+$color-black: #000;
+
+
+// FONT
+$default-font-size: 1.6rem;
+
+
+// GRID
+$grid-width: 114rem;
+$gutter-vertical: 8rem;
+$gutter-vertical-small: 6rem;
+$gutter-horizontal: 6rem;
+
+// BreakPoints
+$sm: 320px;
+$md: 768px;
+$lg: 1080px;
+// Colors
+
+// Sizes
+$ratio: 1.4142;
+$space1: 1rem;
+$space0: $space1/$ratio;
+$space2: $space1*$ratio;
+$space3: $space2*$ratio;
+$space4: $space3*$ratio;
+$space5: $space4*$ratio;
+// GRID

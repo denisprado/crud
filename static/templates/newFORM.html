@@ -1,0 +1,91 @@
+{% extends "layout.html" %} {% block body %}
+
+<h1 class="secondary">Adicionar {{table}}</h1>
+
+<div class='pane'>
+    <form class="form" action="{{ url_for('new'+table)}}" enctype="multipart/form-data" method='post'>
+        <div class="form__grid">
+            <div class="form__grid__content">
+                <dl>
+                    {% for field in fields %}
+                    {% if field[0]=="input" %}
+                    <h3 class="form__label">{{field[1]}}</h3>
+                    <dd>
+                        <input class="form__input" type='text' size='30' name='{{field[2]}}' {{field[3]}}>
+                    </dd>
+                    {% endif %}
+                    {% if field[0]=="textarea" %}
+                    <h3 class="form__label">{{field[1]}}</h3>
+                    <dd>
+                        <textarea class="form__input" name='{{field[2]}}' rows='5' cols='40'></textarea>
+                    </dd>
+                    {% endif %}
+                    {% if field[0]=="file" %}
+                    <h3 class="form__label">Selecione um arquivo:</h3>
+                    <dd>
+                        <input class="form__input" type='file' name='{{field[2]}}'>
+                    </dd>
+                    {% endif %}
+
+                    {% endfor%}
+                </dl>
+            </div>
+            {% if taxonomies %}
+            <div class="form__grid__taxonomy">
+
+                {% for taxonomy in taxonomies %}
+                {% if taxonomy[0]=="select" %}
+                <h3 class="form__label">{{taxonomy[1]}}</h3>
+                <dd>
+                    <select required class="form__select" name="{{taxonomy[2]}}" id="{{taxonomy[2]}}_select">
+                        {% for tax in taxonomy[3] %}
+                        <option value="{{tax.id}}">{{tax.nome}}</option>
+                        {% endfor %}
+                    </select>
+                </dd>
+                {% endif %}
+                {% endfor %}
+                {% if checkboxes %}
+
+                <div class="form__grid__taxonomy__checkbox">
+                    {% for checkbox in checkboxes %}
+                    <h3 class="form__label">{{checkbox[0]}}</h3>
+
+                    {% for check in checkbox[1] %}
+                    <label>
+
+                        <input class="btn btn--primary" type="checkbox" name="{{checkbox[0]}}" value="{{check.id}}">
+                        {% if check.nome %}
+                        <p>{{check.nome}}</p>
+                        {% else %}
+                        <p>{{check.caminho}}</p>
+                        {% endif %}
+                    </label>
+
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if fotos %}
+            <div class="form__grid__images">
+                <h3 class="form__label">Imagem em destaque:</h3>
+                <div class="form__grid__images__option">
+                    {% for foto in fotos[1] %}
+                    <label>
+                        <input class="btn btn--primary" type="radio" name="{{fotos[0]}}" class="fotos__item" value="{{foto.id}}">
+                        <img src="{{ url_for('uploaded_file', filename=foto.caminho) }}"></img>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="form__grid__action">
+                <input class="btn btn--primary" type='submit' value='Criar'>
+                <a class="btn btn--white" href='{{ url_for('list'+table)}}'> Voltar sem Salvar </a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

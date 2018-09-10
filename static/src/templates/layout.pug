@@ -1,0 +1,24 @@
+doctype html
+head
+    meta(charset='UTF-8')
+    meta(lang= htmlWebpackPlugin.options.lang)
+    meta(name='viewport', content='width=device-width, initial-scale=1.0,user-scalable=no')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    link(rel='shortcut icon', href='./img/favicon.ico')
+    title #{htmlWebpackPlugin.options.title}
+body
+    .grid
+    block header
+        header.header
+            block sidebar
+                    
+                mixin link(href, name)
+                    - var active = title= htmlWebpackPlugin.options.title
+                    
+                    li
+                        a(href=href, class={active: name[1] === active})= name[0]
+            .header__menu
+                ul.header__menu__left
+                    -
+                    each val, index in {"/": ["Principal", "/"],"fotos": ["Fotos","fotos"],"festas": ["festas","festas"],"temas": ["temas","temas"]}
+                        +link(index, val)

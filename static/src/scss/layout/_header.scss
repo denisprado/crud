@@ -1,0 +1,16 @@
+.header {
+    &__menu {
+        &__left {
+        }
+        &__right{
+            li{
+                a{
+                    margin:$space4;
+                    padding: $space0 $space1;
+                    display: block;
+                    font-size: $space3;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{% extends "layout.html" %} {% block body %}
+<form class="form" method="POST" enctype="multipart/form-data">
+    {{ form.errors }} {{ form.hidden_tag() }} {% for upload in form.uploads.entries %}
+    <p>
+        {{ upload }}
+    </p>
+    {% endfor %} 
+    {{form.download }}
+    <input class="btn btn--primary" type="submit" value='Enviar'>
+
+</form>
+{% endblock %}

@@ -1,0 +1,170 @@
+import os
+import sys
+from sqlalchemy import Table, Column, ForeignKey, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
+
+
+Base = declarative_base()  # classses especiais que correspondem a tabelas
+
+engine = create_engine("sqlite:///festas_de_papel.db")
+
+artes_festa = Table('itens', Base.metadata,
+                    Column('festa_id', Integer, ForeignKey('festa.id')),
+                    Column('arte_id', Integer, ForeignKey('arte.id'))
+                    )
+produtos_arte = Table('prods', Base.metadata,
+                      Column('arte_id', Integer, ForeignKey('arte.id')),
+                      Column('produto_id', Integer, ForeignKey('produto.id'))
+                      )
+
+
+class Festa(Base):
+    __tablename__ = 'festa'
+    id = Column('id', Integer, primary_key=True, nullable=False)
+    nome = Column('nome', String(255), nullable=False)
+    descricao = Column('descricao', String(255), nullable=False)
+    valor = Column('valor', Integer, nullable=False)
+    foto = Column('foto', Integer, ForeignKey('foto.id'))
+    tema = Column('tema', Integer, ForeignKey('tema.id'))
+
+    artes = relationship('Arte', secondary=artes_festa)
+    foto_festa = relationship('Foto', foreign_keys=foto)
+    tema_festa = relationship('Tema', foreign_keys=tema)
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'valor': self.valor,
+            'foto': self.foto,
+            'tema': self.tema
+        }
+
+
+class Arte(Base):
+    __tablename__ = 'arte'
+    id = Column('id', Integer, primary_key=True, nullable=False)
+    nome = Column('nome', String(255),  nullable=False)
+    descricao = Column('descricao', String(255),  nullable=False)
+    foto = Column(
+        'foto', Integer, ForeignKey('foto.id'))
+    objeto = Column('objeto', Integer, ForeignKey('objeto.id'))
+    tema = Column('tema', Integer, ForeignKey('tema.id'))
+
+    tema_arte = relationship('Tema', foreign_keys=tema)
+    objeto_arte = relationship('Objeto', foreign_keys=objeto)
+    foto_arte = relationship('Foto', foreign_keys=foto)
+    produtos = relationship(
+        'Produto', secondary=produtos_arte, backref='artes')
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'objeto': self.objeto,
+            'foto': self.foto,
+            'tema': self.tema
+        }
+
+
+class Produto(Base):
+    __tablename__ = 'produto'
+    id = Column('id', Integer, primary_key=True, nullable=False)
+    caminho = Column('caminho', String(255))
+    descricao = Column('descricao', String(255))
+    valor = Column('valor', Integer)
+    arte = Column('arte', Integer, ForeignKey('arte.id'))
+
+    arte_produto = relationship(
+        'Arte', foreign_keys=arte, backref='prods')
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'caminho': self.caminho,
+            'descricao': self.descricao,
+            'valor': self.valor,
+            'arte': self.arte
+        }
+
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String(255), unique=True, nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    picture = Column(String(255), unique=True, nullable=False)
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'picture': self.picture
+        }
+
+
+class Foto(Base):
+    __tablename__ = 'foto'
+    id = Column('id', Integer, primary_key=True, nullable=False)
+    descricao = Column('descricao', String(255))
+    caminho = Column('caminho', String(255))
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'descricao': self.descricao,
+            'caminho': self.caminho
+        }
+
+
+class Tema(Base):
+    __tablename__ = 'tema'
+    id = Column('id', Integer, primary_key=True, nullable=False)
+    nome = Column('nome', String(255))
+    descricao = Column('descricao', String(255))
+    foto = Column(
+        'foto', Integer, ForeignKey('foto.id'))
+
+    foto_tema = relationship('Foto', foreign_keys=foto)
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'foto': self.foto,
+        }
+
+
+class Objeto(Base):
+    __tablename__ = 'objeto'
+    id = Column('id', Integer, primary_key=True, nullable=False)
+    nome = Column('nome', String(255))
+    descricao = Column('descricao', String(255))
+    foto = Column(
+        'foto', Integer, ForeignKey('foto.id'))
+
+    foto_objeto = relationship('Foto', foreign_keys=foto)
+
+    @property
+    def serialize(self):
+        return{
+            'id': self.id,
+            'nome': self.nome,
+            'descricao': self.descricao,
+            'foto': self.foto,
+        }
+
+
+Base.metadata.create_all(engine)

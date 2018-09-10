@@ -1,0 +1,73 @@
+{% extends "layout.html" %} {% block body %}
+
+<h1 class="secondary">{{table}}</h1>
+
+<div class='pane'>
+
+    <div class="form__grid">
+        <div class="form__grid__content">
+
+            {% for field in fields %}
+                {% if field[0]=="input" %}
+                    <h3 class="form__label">{{field[1]}}</h3>
+                    <p class="form__input">{{field[4]}}</p>
+                {% elif field[0]=="textarea" %}
+                    <h3 class="form__label">{{field[1]}}</h3>
+                    <p class="form__input">{{field[4]}}</p>
+                {% elif field[0]=="field" %}
+                    <img class="responsive-img" src="{{ url_for('uploaded_file', filename=field[4])}}" name='{{field[2]}}'/>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% if taxonomies %}
+        <div class="form__grid__taxonomy">
+            {% for taxonomy in taxonomies %}
+                {% if taxonomy[0]=="select" %}
+                    <h3 class="form__label">{{taxonomy[1]}}</h3>
+                    {% for tax in taxonomy[3] %}
+                        {% if tax.id==editing[taxonomy[2]] %}
+                            {% if tax.nome %}
+                                <p class="form__input">{{tax.nome}}</p>
+                            {% else %}
+                                <p class="form__input">{{tax.caminho}}</p>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if checkboxes %}
+            {% for checkbox in checkboxes %}
+                <h3 class="form__label">{{checkbox[0]}}</h3>
+                {% for check in checkbox[1] %}
+                    {% for selected in checkbox[2] %}
+                        {% if check.id == selected.id %}
+                            {% if check.nome %}
+                                <p class="form__input"> {{check.nome}}</p>
+                            {% else %}
+                                <p class="form__input"> {{check.caminho}}</p>
+                            {% endif %}
+                        {%endif%}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+        </div>
+        {% if fotos %}
+        <div class="form__grid__images">
+            <div class="form__grid__images__option">
+                {% for foto in fotos[1] %}
+                    {% if editing.foto == foto.id %}
+                        <img src="{{ url_for('uploaded_file', filename=foto.caminho) }}"></img>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="form__grid__action">
+            <a class="btn btn--primary" href='{{url_for('edit'+table, id=id)}}'>Editar</a>
+            <a class="btn btn--white" href='{{url_for('list'+table)}}'>Voltar </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

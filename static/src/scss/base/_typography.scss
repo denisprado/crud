@@ -1,0 +1,59 @@
+$font-size: $space2;
+$line-height: $space3;
+
+body {
+    font-family: arial, helvetica, "proxima-nova", sans-serif;
+    font-weight: 400;
+    /*font-size: 16px;*/
+    line-height: 1.7;
+    color: $color-grey-dark;
+}
+
+h1 {
+    font-size: $space3;
+    color: $color-white;
+    font-weight: 100;
+    &.secondary{
+        font-size: $space2;
+        color:$color-primary;
+    }
+}
+
+
+p {
+    font-size: $font-size;
+    line-height: $line-height;
+}
+
+a {
+    text-decoration: none;
+    color: $color-grey-dark-3;
+}
+
+ul {
+    li {
+        list-style-type: none;
+    }
+}
+.header {
+    &__menu {
+        &__right {
+            a{
+                color:white;
+                font-size: 1.25rem;
+            }
+        }
+    }
+}
+.sidebar {
+    &__menu {
+        &__left{
+            a {
+                font-size: $space2;
+                &:hover {
+                    background-color: $color-grey-light-2;
+                }
+            }
+        }
+    }
+}

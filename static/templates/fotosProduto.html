@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+    <section>
+        <a class="btn btn--green" href="{{url_for('newFoto')}}">Adicionar Foto</a>
+        <div class="fotos card-columns">
+            {% for i in fotos %}
+            <div class="fotos__item card">
+                <img class="card-img" src="{{ url_for('uploaded_file', filename=i.foto_caminho) }}" width="100%"></img>
+                <div class="card-body">
+                    <a href="{{url_for('editFoto', id=i.id)}}">Editar</a>
+                    <p class="card-text">id: {{ i.id }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

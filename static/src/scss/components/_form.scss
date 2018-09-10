@@ -1,0 +1,218 @@
+.form {
+    &__grid {
+        display: grid;
+        grid-template-areas: 'content taxonomy action''images images action';
+
+        @include respond(tab-port) {
+            grid-template-areas: 'content''taxonomy''images''action';
+            grid-template-columns: 12fr;
+        }
+
+        grid-template-columns: repeat(3, 4fr);
+
+        div {
+        }
+
+        &__content {
+            grid-area: content;
+            padding: $space3;
+        }
+
+        &__taxonomy {
+            grid-area: taxonomy;
+            padding: $space3;
+            p.form__input {
+                margin-bottom: $space0;
+                &:last-child{
+                    margin-bottom: $space4;
+
+                }
+            }
+            &__checkbox {
+                label {
+                    display: block;
+
+                    p {
+                        font-size: 2rem;
+                    }
+                }
+
+                label>input {
+                    visibility: hidden;
+                    position: absolute;
+                }
+
+                label>input+p {
+                    border: .1rem dashed $color-grey-dark-2;
+                    border-radius: 1rem;
+                    cursor: pointer;
+                    padding: $space2;
+                    margin: $space0 0 0 0;
+                }
+
+                label>input:checked+p {
+                    border: .1rem dashed white;
+                    background-color: $color-primary;
+                    color: white;
+                    padding: $space2;
+                }
+            }
+        }
+
+        &__images {
+            padding: $space1;
+            grid-area: images;
+            overflow-y: scroll;
+
+            
+            &__option {
+                grid-auto-columns: 3fr;
+                display: grid;
+                grid-template-columns: repeat(4,3fr);
+                
+                @include respond(tab-port) {
+                    grid-gap: $space0 $space0;
+                    grid-template-columns: auto;
+                }
+                img {
+                    width: 100%;
+                    height: 210px;
+                    object-fit: cover;
+                }
+
+                label>input {
+                    visibility: hidden;
+                    position: absolute;
+                }
+
+                label>input+img {
+                    cursor: pointer;
+                    border: 4px solid transparent;
+                }
+
+                label>input:checked+img {
+                    border: 4px solid $color-primary;
+                }
+            }
+        }
+
+        &__action {
+            padding: $space1;
+            grid-area: action;
+            border-left: 1px dashed $color-grey-light-2;
+            background-color: $color-grey-light-1;
+        }
+    }
+
+    &__select {
+        display: grid;
+        grid-template-columns: auto;
+        width: 100%;
+        height: 5rem;
+        font-size: 2rem;
+        padding: 1rem;
+        color: $color-grey-dark-2;
+    }
+
+    &__group:not(:last-child) {
+        margin-bottom: 2rem;
+    }
+
+    &__input {
+        font-size: 1.5rem;
+        font-family: inherit;
+        color: inherit;
+        padding: $space1 $space3;
+        margin-bottom: $space4;
+        border-radius: 2px;
+        background-color: $color-white;
+        border: none;
+        border-bottom: .1rem dashed $color-grey-dark-2;
+        width: 90%;
+        display: block;
+        transition: all .3s;
+
+        @include respond(tab-port) {
+            width: 100%;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 1rem 2rem rgba($color-black, .1);
+            border-bottom: 3px solid $color-primary;
+        }
+
+        &:focus:invalid {
+            border-bottom: 3px solid $color-secondary-dark;
+        }
+
+        &::-webkit-input-placeholder {
+            color: $color-grey-dark-2;
+        }
+    }
+
+    &__label {
+        font-size: $space2;
+        font-weight: 100;
+        margin-top: $space1;
+        display: block;
+        transition: all .3s;
+    }
+
+    &__input:placeholder-shown+&__label {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4rem);
+    }
+
+    &__radio-group {
+        width: 49%;
+        display: inline-block;
+
+        @include respond(tab-port) {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+    }
+
+    &__radio-input {
+        display: none;
+    }
+
+    &__radio-label {
+        font-size: $default-font-size;
+        cursor: pointer;
+        position: relative;
+        padding-left: 4.5rem;
+    }
+
+    &__radio-button {
+        height: 3rem;
+        width: 3rem;
+        border: 5px solid $color-primary;
+        border-radius: 50%;
+        display: inline-block;
+        position: absolute;
+        left: 0;
+        top: -.4rem;
+
+        &::after {
+            content: "";
+            display: block;
+            height: 1.3rem;
+            width: 1.3rem;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: $color-primary;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+    }
+
+    &__radio-input:checked~&__radio-label &__radio-button::after {
+        opacity: 1;
+    }
+}

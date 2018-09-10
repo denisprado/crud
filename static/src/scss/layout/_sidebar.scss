@@ -1,0 +1,13 @@
+.sidebar {
+    &__menu {
+        &__left {
+            li {
+                a {
+                    text-align: left;
+                    display: block;
+                    padding: 1rem;
+                }
+            }
+        }
+    }
+}

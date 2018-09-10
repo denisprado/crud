@@ -1,0 +1,64 @@
+//
+// Base styles
+//
+$card-spacer-x: $space1;
+$card-spacer-y: $space1;
+$card-border-width: 0.1rem;
+$card-border-radius: 0.25rem;
+$card-border-color: $color-grey-light-2;
+$card-border-radius-inner: ($card-border-radius - $card-border-width);
+$card-cap-bg: $color-grey-light-1;
+$enable-flex: true;
+$enable-rounded: true;
+.card {
+  position: relative;
+  margin-bottom: $card-spacer-y;
+  border: $card-border-width solid $card-border-color;
+  border-radius: $card-border-radius;
+  img{
+    object-fit: cover;
+    height: 5rem;
+    width: 8rem;
+  }
+}
+
+.card-title, .card h1 {
+  margin-top: 0;
+  color: $color-primary;
+}
+
+
+.card-text:last-child {
+  margin-bottom: 0;
+}
+
+//
+// Optional textual caps
+//
+.card-body {
+  padding: $card-spacer-y $card-spacer-x;
+  
+}
+//
+// Card set
+//
+.card-columns {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-template-columns: repeat(4, 3fr);
+  @include respond(phone) {
+    grid-template-columns: auto;
+  }
+  @include respond(tab-port) {
+    grid-template-columns: auto;
+  }
+  img{
+    object-fit: cover;
+    height: 16rem;
+    width: 100%;
+  }
+  .card {
+    margin-right: 0.625rem;
+    margin-left: 0.625rem;
+  }
+}

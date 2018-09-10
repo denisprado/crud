@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+    <section>
+        <a class="btn btn--primary" href="{{url_for('newFesta')}}">Adicionar Festa</a>
+        <div class="festas card-columns">
+            {% for festa in festas %}
+            <div class="festas__item card">
+                    {% for foto in fotos %}
+                        {% if foto.id == festa.festa_foto %}
+                            <div class="fotos__item">
+                                <img src="{{ url_for('uploaded_file', filename=foto.foto_caminho) }}" width="100%"></img>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                <h1>{{ festa.festa_nome }}</h1>
+                <p>{{ festa.festa_descr }}</p>
+                <p>{{ festa.festa_valor }}</p>
+                <p>Tema:{% for tema in temas %}
+                    {% if tema.id == festa.festa_tema %}
+                         {{tema.tema_nome}}
+                         {% endif %}
+                    {% endfor %}
+                </p>
+                <a class="btn btn--primary" href="{{url_for('editFesta', id=festa.id)}}">Editar</a>
+                <a class="btn btn--primary" href="{{url_for('deleteFesta', id=festa.id)}}">Excluir</a>
+                <p>id: {{ festa.id }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
