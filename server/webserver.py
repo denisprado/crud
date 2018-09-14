@@ -44,6 +44,7 @@ session = DBSession()
 
 
 def login_required(f):
+    '''Verifique se o usuário está logado '''
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in login_session:
@@ -53,22 +54,24 @@ def login_required(f):
 
 
 def allowed_file(filename):
+    ''' Verifique se a extensão do arquivo enviado é permitida '''
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/login')
 def showLogin():
+    ''' Crie uma variável de estado e redirecione para página de login'''
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-    return render_template('login.html', STATE=state)
+    return render_template('login.html', STATE=state, client_id=CLIENT_ID)
 
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    ''' Conecte o usuário através do Google Plus '''
     # Validate state token
-    print("ok state")
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
@@ -111,7 +114,6 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -153,13 +155,12 @@ def gconnect():
     output += ' " style = "width: 150px;height:150px;'
     output += 'border-radius: 50%;object-fit:cover;">'
     flash("you are now logged in as %s" % login_session['username'])
-    print("done!")
     return output
 
+
 # User Helper Functions
-
-
 def createUser(login_session):
+    '''Crie o usuário utilizando informações do Google Plus'''
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
     session.add(newUser)
@@ -169,11 +170,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    '''Localize o registro do usuário a partir do ID fornecido'''
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    ''' Retorne o ID do usuário a partir do email fornecido'''
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -183,22 +186,17 @@ def getUserID(email):
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    '''Desconecte o usuário'''
     access_token = login_session.get('access_token')
     if access_token is None:
-        print('Access Token is None')
         response = make_response(json.dumps(
             'Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print('In gdisconnect access token is %s'), access_token
-    print('User nome is: ')
-    print(login_session['username'])
     url_initial = 'https://accounts.google.com/o/oauth2/revoke?'
     url = url_initial + 'token=%s' % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print('result is ')
-    print(result)
     if result['status'] == '200':
         del login_session['access_token']
         del login_session['gplus_id']
@@ -217,10 +215,9 @@ def gdisconnect():
 
 
 @app.route('/')
+@login_required
 def index():
-    if 'username' not in login_session:
-        return redirect(url_for('showLogin'))
-
+    ''' Redirecione para a página de listagem de artes '''
     return redirect(url_for('listArte'))
 
 
@@ -228,6 +225,7 @@ def index():
 @app.route('/foto/<filename>')
 @login_required
 def uploaded_file(filename):
+    ''' Retorne o caminho da imagem a partir do nome fornecido'''
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
@@ -235,6 +233,7 @@ def uploaded_file(filename):
 @app.route('/fotos')
 @login_required
 def listFoto():
+    '''Liste as fotos cadastradas'''
     fotos = session.query(Foto).all()
     fields = [["input", "Nome", "nome", "required"], [
         "textarea", "Descrição", "descricao", "required"]]
@@ -246,6 +245,7 @@ def listFoto():
            methods=['GET', 'POST'])
 @login_required
 def showFoto(id):
+    '''Mostre uma foto a partir do id fornecido'''
     editedFoto = session.query(Foto).filter_by(id=id).one()
     fields = [["textarea", "Descrição", "descricao", "required",
                editedFoto.descricao], ["file", "Arquivo", "file", "required",
@@ -257,6 +257,7 @@ def showFoto(id):
 @app.route('/foto/new', methods=['POST', 'GET'])
 @login_required
 def newFoto():
+    '''Crie um registro de foto'''
     if request.method == 'POST':
         if 'file' not in request.files:
             flash(request.files)
@@ -284,9 +285,11 @@ def newFoto():
            methods=['GET', 'POST'])
 @login_required
 def editFoto(id):
+    ''' Edite uma fotografia a partir de ID fornecido'''
     editedFoto = session.query(Foto).filter_by(id=id).one()
     if request.method == 'POST':
         file = request.files['file']
+        # Se foi carregado arquivo
         if file:
             filename = secure_filename(file.filename)
             editedFoto.caminho = filename
@@ -309,6 +312,7 @@ def editFoto(id):
            methods=['GET', 'POST'])
 @login_required
 def deleteFoto(id):
+    '''Delete um registro de fotografia e o seu respectivo arquivo'''
     fotoToDelete = session.query(Foto).filter_by(id=id).one()
     if request.method == 'POST':
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], url_for(
@@ -325,6 +329,7 @@ def deleteFoto(id):
 @app.route('/produtos')
 @login_required
 def listProduto():
+    '''Liste os produtos (arquivos digitais) cadastrados'''
     produtos = session.query(Produto).all()
     fields = [["input", "Descrição", "descricao",
                "required"], ["input", "Valor", "valor", "required"]]
@@ -335,7 +340,7 @@ def listProduto():
 @app.route('/produto/new', methods=['POST', 'GET'])
 @login_required
 def newProduto():
-    # tipos = session.query(tipoProduto).all()
+    ''' Crie um novo produto (arquivo digital de arte)'''
     if request.method == 'POST':
         if 'file' not in request.files:
             flash("Sem arquivo")
@@ -364,10 +369,10 @@ def newProduto():
            methods=['GET', 'POST'])
 @login_required
 def editProduto(id):
+    '''Edite um produto'''
     editedProduto = session.query(Produto).filter_by(id=id).one()
     if request.method == 'POST':
         file = request.files['file']
-        print(request.files)
         if file:
             filename = secure_filename(file.filename)
             editedProduto.caminho = filename
@@ -390,10 +395,10 @@ def editProduto(id):
            methods=['GET', 'POST'])
 @login_required
 def showProduto(id):
+    '''Mostre os produtos (arquivos digitais de arte) cadastrados'''
     editedProduto = session.query(Produto).filter_by(id=id).one()
     if request.method == 'POST':
         file = request.files['file']
-        print(request.files)
         if file:
             filename = secure_filename(file.filename)
             editedProduto.caminho = filename
@@ -413,6 +418,7 @@ def showProduto(id):
            methods=['GET', 'POST'])
 @login_required
 def deleteProduto(id):
+    '''Delete um produto a partir de um ID fornecido'''
     produtoToDelete = session.query(Produto).filter_by(id=id).one()
     if request.method == 'POST':
         session.delete(produtoToDelete)
@@ -428,6 +434,7 @@ def deleteProduto(id):
 @app.route('/temas')
 @login_required
 def listTema():
+    '''Liste os temas registrados'''
     fotos = session.query(Foto).all()
     temas = session.query(Tema).all()
     fields = [["input", "Nome", "nome", "required"], [
@@ -439,6 +446,7 @@ def listTema():
 @app.route('/tema/new', methods=['GET', 'POST'])
 @login_required
 def newTema():
+    '''Crie um novo tema para as artes e festas'''
     fotos = session.query(Foto).all()
     if request.method == 'POST':  # response from template form
         newTema = Tema(nome=request.form['nome'], descricao=request.form[
@@ -458,6 +466,7 @@ def newTema():
            methods=['GET', 'POST'])
 @login_required
 def showTema(id):
+    '''Mostre os temas cadastrados'''
     fotos = session.query(Foto).all()
     editedTema = session.query(Tema).filter_by(id=id).one()
     fields = [["input", "Nome", "nome", "required", editedTema.nome], [
@@ -472,6 +481,7 @@ def showTema(id):
            methods=['GET', 'POST'])
 @login_required
 def editTema(id):
+    '''Edite um tema a partir de uma ID fornecido'''
     fotos = session.query(Foto).all()
     editedTema = session.query(Tema).filter_by(id=id).one()
     if request.method == 'POST':
@@ -497,6 +507,7 @@ def editTema(id):
            methods=['GET', 'POST'])
 @login_required
 def deleteTema(id):
+    '''Delete um tema cadastrado a partir de um ID fornecido'''
     temaToDelete = session.query(Tema).filter_by(id=id).one()
     if request.method == 'POST':
         session.delete(temaToDelete)
@@ -512,6 +523,7 @@ def deleteTema(id):
 @app.route('/objetos')
 @login_required
 def listObjeto():
+    '''Lista os objetos cadastrados'''
     fotos = session.query(Foto).all()
     objetos = session.query(Objeto).all()
     return render_template('listFORM.html', table="Objeto", var_table=objetos,
@@ -521,6 +533,7 @@ def listObjeto():
 @app.route('/objeto/<int:id>')
 @login_required
 def showObjeto(id):
+    '''Mostre um Objeto a partir de um ID fornecido'''
     fotos = session.query(Foto).all()
     editedObjeto = session.query(Objeto).filter_by(id=id).one()
     if request.method == 'POST':
@@ -546,6 +559,7 @@ def showObjeto(id):
 @app.route('/objeto/new', methods=['GET', 'POST'])
 @login_required
 def newObjeto():
+    '''Cria um novo objeto de Arte'''
     fotos = session.query(Foto).all()
     if request.method == 'POST':  # response from template form
 
@@ -566,6 +580,7 @@ def newObjeto():
            methods=['GET', 'POST'])
 @login_required
 def editObjeto(id):
+    '''Edita um objeto'''
     fotos = session.query(Foto).all()
     editedObjeto = session.query(Objeto).filter_by(id=id).one()
     if request.method == 'POST':
@@ -592,6 +607,7 @@ def editObjeto(id):
            methods=['GET', 'POST'])
 @login_required
 def deleteObjeto(id):
+    '''Apaga o objeto a partir de um ID fornecido'''
     objetoToDelete = session.query(Objeto).filter_by(id=id).one()
     if request.method == 'POST':
         session.delete(objetoToDelete)
@@ -606,6 +622,7 @@ def deleteObjeto(id):
 @app.route('/festas')
 @login_required
 def listFesta():
+    '''Lista as festas cadastradas'''
     fotos = session.query(Foto).all()
     festas = session.query(Festa).all()
     temas = session.query(Tema).all()
@@ -618,7 +635,7 @@ def listFesta():
 @app.route('/festa/<int:id>')
 @login_required
 def showFesta(id):
-
+    '''Mostre uma festa cadastrada'''
     artes = session.query(Arte).all()
     fotos = session.query(Foto).all()
     temas = session.query(Tema).all()
@@ -639,6 +656,7 @@ def showFesta(id):
 @app.route('/festa/new', methods=['GET', 'POST'])
 @login_required
 def newFesta():
+    '''Cria uma nova festa'''
     fotos = session.query(Foto).all()
     temas = session.query(Tema).all()
     artes = session.query(Arte).all()
@@ -653,8 +671,6 @@ def newFesta():
         for id_arte in artes_selected:
             arte = session.query(Arte).filter_by(id=id_arte).one()
             newFesta.artes.append(arte)
-        for arte in newFesta.artes:
-            print(arte.id, ".", arte.nome)
         session.add(newFesta)
         session.commit()
         return redirect(url_for('listFesta'))
@@ -677,6 +693,7 @@ def newFesta():
            methods=['GET', 'POST'])
 @login_required
 def editFesta(id):
+    '''edita uma nova festa'''
     temas = session.query(Tema).all()
     fotos = session.query(Foto).all()
     artes = session.query(Arte).all()
@@ -696,7 +713,6 @@ def editFesta(id):
             artes_selected = request.form.getlist('artes')
             editedFesta.artes = []
             for id_arte in artes_selected:
-                print(id_arte)
                 arte = session.query(Arte).filter_by(id=id_arte).one()
                 editedFesta.artes.append(arte)
         session.add(editedFesta)
@@ -720,6 +736,7 @@ def editFesta(id):
            methods=['GET', 'POST'])
 @login_required
 def deleteFesta(id):
+    '''Deleta uma festa'''
     festaToDelete = session.query(Festa).filter_by(id=id).one()
     if request.method == 'POST':
         session.delete(festaToDelete)
@@ -735,6 +752,7 @@ def deleteFesta(id):
 @app.route('/festas/JSON')
 @login_required
 def listFestaJSON():
+    """Liste as festas em formato JSON"""
     festas = session.query(Festa).options(joinedload(Festa.artes)).all()
     artes = session.query(Arte).options(joinedload(Arte.produtos)).all()
     return jsonify(dict(Festa=[dict(c.serialize,
@@ -748,6 +766,7 @@ def listFestaJSON():
 @app.route('/festa/<int:id>/JSON')
 @login_required
 def showFestaJSON(id):
+    '''Mostre uma festa em formato JSON'''
     artes = session.query(Arte).options(joinedload(Arte.prods)).all()
     festas = session.query(Festa).options(
         joinedload(Festa.artes)).filter_by(id=id)
@@ -763,6 +782,7 @@ def showFestaJSON(id):
 @app.route('/arte/<int:id>/JSON')
 @login_required
 def showArteJSON(id):
+    '''Mostre uma arte em formato JSON'''
     artes = session.query(Arte).options(joinedload(Arte.produtos)).filter_by(
         id=id)
     return jsonify(Arte=[dict(d.serialize,
@@ -774,6 +794,7 @@ def showArteJSON(id):
 @app.route('/artes/JSON')
 @login_required
 def listArteJSON():
+    '''Liste as Artes em formato JSON'''
     artes = session.query(Arte).options(joinedload(Arte.produtos)).all()
     return jsonify(dict(Arte=[dict(d.serialize,
                         Produtos=[i.serialize
@@ -784,6 +805,7 @@ def listArteJSON():
 @app.route('/produtos/JSON')
 @login_required
 def listProdutoJSON():
+    '''Liste os Produtos em formato JSON'''
     produtos = session.query(Produto).all()
     return jsonify(produtos=[i.serialize for i in produtos])
 
@@ -791,6 +813,7 @@ def listProdutoJSON():
 @app.route('/produto/<int:id>/JSON')
 @login_required
 def showProdutoJSON(id):
+    '''Mostre um produto em formato JSON'''
     produto = session.query(Produto).filter_by(id=id)
     return jsonify(produto=[i.serialize for i in produto])
 
@@ -798,6 +821,7 @@ def showProdutoJSON(id):
 @app.route('/temas/JSON')
 @login_required
 def listTemaJSON():
+    '''Liste os temas em formato JSON'''
     temas = session.query(Tema).all()
     return jsonify(temas=[i.serialize for i in temas])
 
@@ -805,6 +829,7 @@ def listTemaJSON():
 @app.route('/tema/<int:id>/JSON')
 @login_required
 def showTemaJSON(id):
+    '''Mostre um tema em formato JSON'''
     tema = session.query(Tema).filter_by(id=id)
     return jsonify(tema=[i.serialize for i in tema])
 
@@ -812,6 +837,7 @@ def showTemaJSON(id):
 @app.route('/fotos/JSON')
 @login_required
 def listFotoJSON():
+    """Mostre as fotos em formato JSON"""
     fotos = session.query(Foto).all()
     return jsonify(fotos=[i.serialize for i in fotos])
 
@@ -819,6 +845,7 @@ def listFotoJSON():
 @app.route('/foto/<int:id>/JSON')
 @login_required
 def showFotoJSON(id):
+    '''Mostre as fotos em formato JSON'''
     foto = session.query(Foto).all()
     return jsonify(foto=[i.serialize for i in foto])
 
@@ -826,6 +853,7 @@ def showFotoJSON(id):
 @app.route('/objetos/JSON')
 @login_required
 def listObjetoJSON():
+    '''Mostre os objetos em formato JSON'''
     objetos = session.query(Objeto).all()
     return jsonify(objetos=[i.serialize for i in objetos])
 
@@ -833,6 +861,7 @@ def listObjetoJSON():
 @app.route('/objeto/<int:id>/JSON')
 @login_required
 def showObjetoJSON(id):
+    '''Mostre um objeto em formato JSON'''
     objeto = session.query(Objeto).all()
     return jsonify(objeto=[i.serialize for i in objeto])
 
@@ -840,6 +869,7 @@ def showObjetoJSON(id):
 @app.route('/artes')
 @login_required
 def listArte():
+    '''Mostre as artes cadastradas'''
     fotos = session.query(Foto).all()
     artes = session.query(Arte).all()
     temas = session.query(Tema).all()
@@ -854,6 +884,7 @@ def listArte():
 @app.route('/arte/<int:id>')
 @login_required
 def showArte(id):
+    '''Mostre uma arte a partir de um ID cadastrado'''
     fotos = session.query(Foto).all()
     objetos = session.query(Objeto).all()
     produtos = session.query(Produto).all()
@@ -874,6 +905,7 @@ def showArte(id):
 @app.route('/arte/new', methods=['GET', 'POST'])
 @login_required
 def newArte():
+    '''Crie uma nova arte'''
     fotos = session.query(Foto).all()
     temas = session.query(Tema).all()
     produtos = session.query(Produto).all()
@@ -909,6 +941,7 @@ def newArte():
            methods=['GET', 'POST'])
 @login_required
 def editArte(id):
+    '''Edite uma arte'''
     temas = session.query(Tema).all()
     fotos = session.query(Foto).all()
     produtos = session.query(Produto).all()
@@ -951,6 +984,7 @@ def editArte(id):
            methods=['GET', 'POST'])
 @login_required
 def deleteArte(id):
+    '''Delete uma arte a partir de um ID fornecido'''
     arteToDelete = session.query(Arte).filter_by(id=id).one()
     if request.method == 'POST':
         session.delete(arteToDelete)

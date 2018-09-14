@@ -21,6 +21,8 @@ produtos_arte = Table('prods', Base.metadata,
 
 
 class Festa(Base):
+    '''Festa é uma tabela que registra um conjunto de informações
+    e pode ser considerada principalmente um conjunto de artes'''
     __tablename__ = 'festa'
     id = Column('id', Integer, primary_key=True, nullable=False)
     nome = Column('nome', String(255), nullable=False)
@@ -46,6 +48,9 @@ class Festa(Base):
 
 
 class Arte(Base):
+    '''Artes é a tabela de registros que contém um conjunto
+     de produtos e informações referentes a um desenho distinto
+     dos outros'''
     __tablename__ = 'arte'
     id = Column('id', Integer, primary_key=True, nullable=False)
     nome = Column('nome', String(255),  nullable=False)
@@ -74,6 +79,9 @@ class Arte(Base):
 
 
 class Produto(Base):
+    '''Produto é uma tabela que cadastra
+    os arquivos das artes que serão comercializados ou outros tipos
+    de Produto. Cada produto esta relacionado à uma arte.'''
     __tablename__ = 'produto'
     id = Column('id', Integer, primary_key=True, nullable=False)
     caminho = Column('caminho', String(255))
@@ -96,6 +104,7 @@ class Produto(Base):
 
 
 class User(Base):
+    '''Tabela de usuários'''
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String(255), unique=True, nullable=False)
@@ -113,6 +122,7 @@ class User(Base):
 
 
 class Foto(Base):
+    '''Tabela com as fotografias utilizadas nas outras tabelas'''
     __tablename__ = 'foto'
     id = Column('id', Integer, primary_key=True, nullable=False)
     descricao = Column('descricao', String(255))
@@ -128,6 +138,7 @@ class Foto(Base):
 
 
 class Tema(Base):
+    '''Tabela com os temas que classificam as artes e festas'''
     __tablename__ = 'tema'
     id = Column('id', Integer, primary_key=True, nullable=False)
     nome = Column('nome', String(255))
@@ -148,6 +159,8 @@ class Tema(Base):
 
 
 class Objeto(Base):
+    ''' Tipos de objetos em que as artes podem ser classificadas. 
+    Cestas, tops e Balões por exemplo'''
     __tablename__ = 'objeto'
     id = Column('id', Integer, primary_key=True, nullable=False)
     nome = Column('nome', String(255))
