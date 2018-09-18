@@ -229,7 +229,6 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-# ##### FOTOS ######
 @app.route('/fotos')
 @login_required
 def listFoto():
@@ -325,7 +324,6 @@ def deleteFoto(id):
                                table="Foto")
 
 
-# ##### PRODUTOS ######
 @app.route('/produtos')
 @login_required
 def listProduto():
@@ -428,7 +426,6 @@ def deleteProduto(id):
         return render_template('deleteFORM.html', record=produtoToDelete,
                                table="Produto")
 
-# ##### TEMAS ######
 
 
 @app.route('/temas')
@@ -518,7 +515,6 @@ def deleteTema(id):
                                table="Tema")
 
 
-# ##### OBJETOS ######
 
 @app.route('/objetos')
 @login_required
@@ -618,7 +614,6 @@ def deleteObjeto(id):
                                table="Objeto")
 
 
-# ##### FESTA ######
 @app.route('/festas')
 @login_required
 def listFesta():
@@ -746,7 +741,6 @@ def deleteFesta(id):
         return render_template('deleteFORM.html', record=festaToDelete,
                                table="Festa")
 
-# ##### ARTE ######
 
 
 @app.route('/festas/JSON')
