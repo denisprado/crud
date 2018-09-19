@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+# encoding=utf8
 import os
 import sys
 from sqlalchemy import Table, Column, ForeignKey, Integer, String
