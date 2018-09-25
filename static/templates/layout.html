@@ -401,9 +401,9 @@
 
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                <ul class="flashes popup">
+                <ul class="flashes">
                     {% for messages in messages %}
-                    <li>{{ messages }}</li>
+                    <li class="alert-danger">{{ messages }}</li>
                     {% endfor %}
                 </ul>
                 {% endif %}

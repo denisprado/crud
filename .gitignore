@@ -1,3 +1,4 @@
 /static/node_modules
 /.vagrant
 /.vscode
+/.ssh

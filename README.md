@@ -1,16 +1,16 @@
-# Festa de Papel - Catálogo de Produtos
+# Festa de Papel - Catalogo de Produtos
 
-## Apresentação
-Este é um aplicativo em Python para criação do catálogo de produtos da loja Festa de Papel que comercializará arquivos de artes para impressoras de corte. O catálogo contém tabelas para gerencimaneto de Festas, de Artes e de Produtos (arquivos digitais). Além disso, o aplicativo gerencia fotos, temas e (tipos de) objetos que são utilizados nas tabelas anteriomente. 
+## Apresentacao
+Este e um aplicativo em Python para criacao do catalogo de produtos da loja Festa de Papel que comercializara arquivos de artes para impressoras de corte. O catalogo contem tabelas para gerencimaneto de Festas, de Artes e de Produtos (arquivos digitais). Alem disso, o aplicativo gerencia fotos, temas e (tipos de) objetos que sao utilizados nas tabelas anteriomente. 
 
-Este é um projeto para o Udacity Nanodegree, mas busquei iniciar a solução de um caso real, que poderá ser desenvolvido até se tornar um aplicativo em produção.
+Este e um projeto para o Udacity Nanodegree, mas busquei iniciar a solucao de um caso real, que podera ser desenvolvido ate se tornar um aplicativo em producao.
 
 ## Relacionamentos entre as Tabelas
-O aplicativo foi criado de maneira que as tabelas se relacionam para formar um catálogo. Uma Festa pode conter diversas Artes. Uma Arte pode estar contida em diversas Festas, e contém diversos Produtos (arquivos digitais).  Os Produtos serão listados nos formulários de criação, edição e exibição das Artes, assim como as Artes nos formulários das Festas. As fotos são centralizadas em uma única tabela onde podem ser enviadas e, posteriormente, ficarão disponíveis para utilização como fotos em destaque de Festsa, Artes, Temas e Objetos. Artes e Festas são relacionadas à Temas. Artes são relacionadas Objetos (tipo de objeto que a arte é). 
+O aplicativo foi criado de maneira que as tabelas se relacionam para formar um catalogo. Uma Festa pode conter diversas Artes. Uma Arte pode estar contida em diversas Festas, e contem diversos Produtos (arquivos digitais).  Os Produtos serao listados nos formularios de criacao, edicao e exibicao das Artes, assim como as Artes nos formularios das Festas. As fotos sao centralizadas em uma única tabela onde podem ser enviadas e, posteriormente, ficarao disponíveis para utilizacao como fotos em destaque de Festsa, Artes, Temas e Objetos. Artes e Festas sao relacionadas à Temas. Artes sao relacionadas Objetos (tipo de objeto que a arte e). 
 
 ## Início e login
-Para iniciar o catálogo, na pasta server, execute 
+Para iniciar o catalogo, na pasta server, execute 
 
     python webserver.py
     
-Será necessário se conectar utilizando o Google+ para ter acesso ao gerenciamento dos registros.
+Sera necessario se conectar utilizando o Google+ para ter acesso ao gerenciamento dos registros.

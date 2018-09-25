@@ -1,7 +1,7 @@
 {
   "name": "festadepapel",
   "version": "1.0.0",
-  "description": "Catálogo da Festa de Papel",
+  "description": "Catalogo da Festa de Papel",
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development --watch",
