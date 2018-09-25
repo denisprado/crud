@@ -183,7 +183,7 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except ValueError:
         return None
 
 
@@ -304,17 +304,18 @@ def editFoto(id):
                 flash("Nova foto adicionada")
             if request.form['descricao']:
                 editedItem.descricao = request.form['descricao']
-                editedItem.user=login_session['user_id']
+                editedItem.user = login_session['user_id']
             return redirect(url_for('listFoto'))
         else:
             fields = [["textarea", "Descricao", "descricao",
                        editedItem.descricao], ["file", "Arquivo", "file",
                                                "required", editedItem.caminho]]
             return render_template('editFORM.html', id=id, fields=fields,
-                                    editing=editedItem, table="Foto")
+                                   editing=editedItem, table="Foto")
     else:
         flash("Voce nao tem privilegios para editar este item")
-        return redirect(url_for('listFoto'))    
+        return redirect(url_for('listFoto'))
+
 
 @app.route('/foto/<int:id>/delete',
            methods=['GET', 'POST'])
@@ -331,10 +332,11 @@ def deleteFoto(id):
             return redirect(url_for('listFoto'))
         else:
             return render_template('deleteFORM.html', record=fotoToDelete,
-                                table="Foto")
-    else:    
+                                   table="Foto")
+    else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listFoto'))
+
 
 @app.route('/produtos')
 @login_required
@@ -395,16 +397,17 @@ def editProduto(id):
                 return redirect(url_for('listProduto'))
         else:
             fields = [["file", "Arquivo", "file", "required",
-                    editedItem.caminho], ["textarea", "Descricao",
-                                                "descricao",
-                                                editedItem.descricao],
-                    ["input", "Valor", "valor", "", editedItem.valor]]
+                       editedItem.caminho], ["textarea", "Descricao",
+                                             "descricao",
+                                             editedItem.descricao],
+                      ["input", "Valor", "valor", "", editedItem.valor]]
             return render_template('editFORM.html', id=id,
-                                fields=fields, editing=editedItem,
-                                table="Produto")
+                                   fields=fields, editing=editedItem,
+                                   table="Produto")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listProduto'))
+
 
 @app.route('/produto/<int:id>',
            methods=['GET', 'POST'])
@@ -435,7 +438,7 @@ def showProduto(id):
 def deleteProduto(id):
     '''Delete um produto a partir de um ID fornecido'''
     produtoToDelete = session.query(Produto).filter_by(id=id).one()
-    
+
     if request.method == 'POST':
         session.delete(produtoToDelete)
         session.commit()
@@ -516,10 +519,12 @@ def editTema(id):
                 editedItem.descricao]]
             radio = ["foto", fotos, editedItem.foto]
             return render_template('editFORM.html', id=id, fields=fields,
-                                editing=editedItem, fotos=radio, table="Tema")
+                                   editing=editedItem, fotos=radio,
+                                   table="Tema")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listTema'))
+
 
 @app.route('/tema/<int:id>/delete',
            methods=['GET', 'POST'])
@@ -534,10 +539,11 @@ def deleteTema(id):
             return redirect(url_for('listTema'))
         else:
             return render_template('deleteFORM.html', record=temaToDelete,
-                                table="Tema")
+                                   table="Tema")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listTema'))
+
 
 @app.route('/objetos')
 @login_required
@@ -617,15 +623,16 @@ def editObjeto(id):
             return redirect(url_for('listObjeto'))
         else:
             fields = [["input", "Nome", "nome", "required", editedItem.nome],
-                    ["textarea", "Descricao", "descricao",
-                    editedItem.descricao]]
+                      ["textarea", "Descricao", "descricao",
+                       editedItem.descricao]]
             radio = ["foto", fotos]
             return render_template('editFORM.html', id=id, fields=fields,
-                                editing=editedItem, fotos=radio,
-                                table="Objeto")
+                                   editing=editedItem, fotos=radio,
+                                   table="Objeto")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listObjeto'))
+
 
 @app.route('/objeto/<int:id>/delete',
            methods=['GET', 'POST'])
@@ -640,7 +647,7 @@ def deleteObjeto(id):
             return redirect(url_for('listObjeto'))
         else:
             return render_template('deleteFORM.html', record=objetoToDelete,
-                                table="Objeto")
+                                   table="Objeto")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listObjeto'))
@@ -670,7 +677,7 @@ def showFesta(id):
     fields = [["input", "Nome", "nome", "required", editedItem.nome],
               ["textarea", "Descricao", "descricao", "required",
                editedItem.descricao], ["input", "Valor", "valor", "",
-                                        editedItem.valor]]
+                                       editedItem.valor]]
     taxonomies = [["select", "Tema", "tema", temas, editedItem.tema]]
     radio = ["foto", fotos, editedItem.foto]
     artes = [["artes", artes, editedItem.artes]]
@@ -726,7 +733,7 @@ def editFesta(id):
     fotos = session.query(Foto).all()
     artes = session.query(Arte).all()
     editedItem = session.query(Festa).filter_by(id=id).one()
-   
+
     if editedItem.user == login_session['user_id']:
         if request.method == 'POST':
             if request.form['nome']:
@@ -751,19 +758,20 @@ def editFesta(id):
             return redirect(url_for('listFesta'))
         else:
             fields = [["input", "Nome", "nome", "required", editedItem.nome],
-                    ["textarea", "Descricao", "descricao",
-                    editedItem.descricao], ["input", "Valor", "valor", "",
-                                                editedItem.valor]]
+                      ["textarea", "Descricao", "descricao",
+                       editedItem.descricao], ["input", "Valor", "valor", "",
+                                               editedItem.valor]]
             taxonomies = [["select", "Tema", "tema", temas, editedItem.tema]]
             radio = ["foto", fotos, editedItem.foto]
             artes = [["artes", artes, editedItem.artes]]
             return render_template('editFORM.html', id=id, fields=fields,
-                                editing=editedItem, fotos=radio,
-                                taxonomies=taxonomies,
-                                checkboxes=artes, table="Festa")
+                                   editing=editedItem, fotos=radio,
+                                   taxonomies=taxonomies,
+                                   checkboxes=artes, table="Festa")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listFesta'))
+
 
 @app.route('/festa/<int:id>/delete',
            methods=['GET', 'POST'])
@@ -778,10 +786,11 @@ def deleteFesta(id):
             return redirect(url_for('listFesta'))
         else:
             return render_template('deleteFORM.html', record=festaToDelete,
-                                table="Festa")
+                                   table="Festa")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listFesta'))
+
 
 @app.route('/festas/JSON')
 @login_required
@@ -820,8 +829,8 @@ def showArteJSON(id):
     artes = session.query(Arte).options(joinedload(Arte.produtos)).filter_by(
         id=id)
     return jsonify(Arte=[dict(d.serialize,
-                         Produtos=[i.serialize
-                                   for i in d.produtos])
+                              Produtos=[i.serialize
+                                        for i in d.produtos])
                          for d in artes])
 
 
@@ -831,9 +840,9 @@ def listArteJSON():
     '''Liste as Artes em formato JSON'''
     artes = session.query(Arte).options(joinedload(Arte.produtos)).all()
     return jsonify(dict(Arte=[dict(d.serialize,
-                        Produtos=[i.serialize
-                                  for i in d.produtos])
-                        for d in artes]))
+                                   Produtos=[i.serialize
+                                             for i in d.produtos])
+                              for d in artes]))
 
 
 @app.route('/produtos/JSON')
@@ -998,27 +1007,30 @@ def editArte(id):
                 editedItem.produtos = []
                 produtos_selected = request.form.getlist('produtos')
                 for id_produto in produtos_selected:
-                    produto = session.query(Produto).filter_by(id=id_produto).one()
+                    produto = session.query(
+                        Produto).filter_by(id=id_produto).one()
                     editedItem.produtos.append(produto)
             editedItem.user = login_session['user_id']
-            
+
             session.add(editedItem)
             session.commit()
             return redirect(url_for('listArte'))
         else:
             fields = [["input", "Nome", "nome", "required", editedItem.nome],
-                    ["textarea", "Descricao", "descricao", editedItem.descricao]]
+                      ["textarea", "Descricao", "descricao",
+                       editedItem.descricao]]
             taxonomies = [["select", "Tema", "tema", temas],
-                        ["select", "Objeto", "objeto", objetos]]
+                          ["select", "Objeto", "objeto", objetos]]
             radio = ["foto", fotos, editedItem.foto]
             produtos = [["produtos", produtos, editedItem.produtos]]
             return render_template('editFORM.html', id=id, fields=fields,
-                                editing=editedItem, fotos=radio,
-                                taxonomies=taxonomies,
-                                checkboxes=produtos, table="Arte")
+                                   editing=editedItem, fotos=radio,
+                                   taxonomies=taxonomies,
+                                   checkboxes=produtos, table="Arte")
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listArte'))
+
 
 @app.route('/arte/<int:id>/delete',
            methods=['GET', 'POST'])
@@ -1033,7 +1045,7 @@ def deleteArte(id):
             return redirect(url_for('listArte'))
         else:
             return render_template('deleteFORM.html', table="Arte", var="arte",
-                                record=arteToDelete)
+                                   record=arteToDelete)
     else:
         flash("Voce nao tem privilegios para editar este item")
         return redirect(url_for('listArte'))
