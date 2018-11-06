@@ -7,10 +7,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
-
 Base = declarative_base()  # classses especiais que correspondem a tabelas
 
-engine = create_engine("sqlite:///festas_de_papel.db")
+engine = create_engine('postgresql://catalog:clipper02@localhost/catalog')
 
 artes_festa = Table('itens', Base.metadata,
                     Column('festa_id', Integer, ForeignKey('festa.id')),

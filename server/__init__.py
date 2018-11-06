@@ -1,5 +1,5 @@
-#!/usr/local/bin/python
-# encoding=utf8
+#!/usr/bin/env python2.7
+# encoding: utf-8
 import os
 import tempfile
 from flask import Flask, flash, render_template, request, redirect, url_for
@@ -20,13 +20,14 @@ import httplib2
 import json
 from flask import make_response
 import requests
+import psycopg2
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/catalog/catalog/server/client_secrets.json', 'r').read())['web']['client_id']
 
 APPLICATION_nome = "Festa de Papel"
 
-UPLOAD_FOLDER = "uploads/fotos"
+UPLOAD_FOLDER = "/var/www/catalog/catalog/server/uploads/fotos/"
 ALLOWED_EXTENSIONS = set(["jpg", "gif", "png", "jpge", "cdr"])
 
 app = Flask(__name__, static_folder="../static/dist/css/",
@@ -35,8 +36,7 @@ app = Flask(__name__, static_folder="../static/dist/css/",
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object(__name__)
 
-engine = create_engine('sqlite:///festas_de_papel.db',
-                       connect_args={'check_same_thread': False})
+engine = create_engine('postgresql://catalog:clipper02@localhost/catalog')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -81,7 +81,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/var/www/catalog/catalog/server/client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -183,7 +183,7 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except ValueError:
+    except:
         return None
 
 
@@ -1052,7 +1052,4 @@ def deleteArte(id):
 
 
 if __name__ == '__main__':
-    app.secret_key = ''.join(random.choice(
-        string.ascii_uppercase + string.digits) for x in range(32))
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
