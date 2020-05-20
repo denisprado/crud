@@ -18,7 +18,7 @@ Flask-Testing==0.6.2
 Flask-WTF==0.14.2
 ForgeryPy==0.1
 gunicorn==19.9.0
-httplib2==0.11.3
+httplib2==0.18.0
 idna==2.7
 isort==4.3.4
 itsdangerous==0.24
